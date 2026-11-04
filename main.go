@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -34,69 +33,60 @@ func (u *User) Withdraw(amount float64) error {
 	return nil
 }
 
+func printBalance(u *User) {
+	fmt.Printf("Пользователь: %s (ID: %s) | Баланс: %.2f\n", u.Name, u.ID, u.Balance)
+}
+
 func main() {
-	user := &User{
+	user1 := &User{
 		ID:      "1",
 		Name:    "Alex",
 		Balance: 1000,
 	}
 
-	for {
-		fmt.Println("\n===== БАНК =====")
-		fmt.Println("1. Пополнить баланс")
-		fmt.Println("2. Снять деньги")
-		fmt.Println("3. Посмотреть баланс")
-		fmt.Println("4. Выход")
-		fmt.Print("Выберите действие: ")
-
-		var choice int
-		if _, err := fmt.Scan(&choice); err != nil {
-			fmt.Println("Некорректный ввод")
-			return
-		}
-
-		switch choice {
-		case 1:
-			var amount float64
-			fmt.Print("Введите сумму пополнения: ")
-
-			if _, err := fmt.Scan(&amount); err != nil {
-				fmt.Println("Некорректный ввод")
-				return
-			}
-
-			if err := user.Deposit(amount); err != nil {
-				fmt.Println("Ошибка:", err)
-			} else {
-				fmt.Println("Баланс успешно пополнен")
-			}
-
-		case 2:
-			var amount float64
-			fmt.Print("Введите сумму снятия: ")
-
-			if _, err := fmt.Scan(&amount); err != nil {
-				fmt.Println("Некорректный ввод")
-				return
-			}
-
-			if err := user.Withdraw(amount); err != nil {
-				fmt.Println("Ошибка:", err)
-			} else {
-				fmt.Println("Деньги успешно сняты")
-			}
-
-		case 3:
-			fmt.Printf("Пользователь: %s\n", user.Name)
-			fmt.Printf("ID: %s\n", user.ID)
-			fmt.Printf("Текущий баланс: %.2f\n", user.Balance)
-
-		case 4:
-			fmt.Println("Выход из программы")
-			return
-
-		default:
-			fmt.Println("Неизвестная команда")
-		}
+	user2 := &User{
+		ID:      "2",
+		Name:    "Maria",
+		Balance: 500,
 	}
+
+	fmt.Println("===== Начальные балансы =====")
+	printBalance(user1)
+	printBalance(user2)
+
+	fmt.Println("\n===== Пополнение =====")
+
+	if err := user1.Deposit(300); err != nil {
+		fmt.Println("Ошибка:", err)
+	} else {
+		fmt.Println("Alex пополнил баланс на 300")
+		printBalance(user1)
+	}
+
+	if err := user2.Deposit(150.50); err != nil {
+		fmt.Println("Ошибка:", err)
+	} else {
+		fmt.Println("Maria пополнила баланс на 150.50")
+		printBalance(user2)
+	}
+
+	fmt.Println("\n===== Снятие =====")
+
+	if err := user1.Withdraw(200); err != nil {
+		fmt.Println("Ошибка:", err)
+	} else {
+		fmt.Println("Alex снял 200")
+		printBalance(user1)
+	}
+
+	if err := user2.Withdraw(1000); err != nil {
+		fmt.Println("Ошибка:", err)
+	} else {
+		fmt.Println("Maria сняла 1000")
+		printBalance(user2)
+	}
+
+	fmt.Println("\n===== Итоговые балансы =====")
+	printBalance(user1)
+	printBalance(user2)
 }
