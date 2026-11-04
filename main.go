@@ -288,12 +288,6 @@ func (q *TxQueue) takeAll() []Transaction {
 	return items
 }
 
-func (q *TxQueue) addMany(txs []Transaction) {
-	q.mu.Lock()
-	defer q.mu.Unlock()
-	q.items = append(txs, q.items...)
-}
-
 type Processor struct {
 	ps      *PaymentSystem
 	queue   *TxQueue
@@ -313,7 +307,7 @@ func (p *Processor) Process() []TxResult {
 		return nil
 	}
 
-	txCh := make(chan indexedTx)
+	txCh := make(chan indexedTx, len(queue))
 	resCh := make(chan TxResult, len(queue))
 
 	var wg sync.WaitGroup
@@ -622,7 +616,7 @@ func runSelfTests() bool {
 	queue.Add(Transaction{alice.ID(), "nonexistent", 10})
 	queue.Add(Transaction{alice.ID(), bob.ID(), 20})
 
-	proc := NewProcessor(ps, queue, 3)
+	proc := NewProcessor(ps, queue, 1)
 	results := proc.Process()
 	if len(results) != 3 {
 		fmt.Printf("FAIL results len=%d\n", len(results))
@@ -656,7 +650,7 @@ func main() {
 	c := newConsole()
 	ps := NewPaymentSystem()
 	queue := &TxQueue{}
-	proc := NewProcessor(ps, queue, 3)
+	proc := NewProcessor(ps, queue, 1)
 
 	fmt.Println("=== ПЛАТЁЖНАЯ СИСТЕМА (v4) ===")
 
