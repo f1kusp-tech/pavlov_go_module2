@@ -108,8 +108,7 @@ func (ps *PaymentSystem) ProcessingTransactions(t Transaction) error {
 		return err
 	}
 
-	toUser.Balance += t.Amount
-	return nil
+	return toUser.Deposit(t.Amount)
 }
 
 func (ps *PaymentSystem) Worker(ch <-chan Transaction, wg *sync.WaitGroup) {
